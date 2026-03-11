@@ -5,7 +5,11 @@ import type {
   ToolErrorEvent,
   ToolStartEvent,
 } from './agent/index.js';
-import { getApiKeyNameForProvider, getProviderDisplayName } from './utils/env.js';
+import {
+  getApiKeyNameForProvider,
+  getProviderApiKeyUrl,
+  getProviderDisplayName,
+} from './utils/env.js';
 import { logger } from './utils/logger.js';
 import {
   AgentRunnerController,
@@ -358,11 +362,15 @@ export async function runCli() {
       const selector = createApiKeyConfirmSelector((wantsToSet) =>
         modelSelection.handleApiKeyConfirm(wantsToSet),
       );
+      const providerName = getProviderDisplayName(state.pendingProvider);
+      const apiKeyUrl = getProviderApiKeyUrl(state.pendingProvider);
       renderScreenView(
         'Set API Key',
-        `Would you like to set your ${getProviderDisplayName(state.pendingProvider)} API key?`,
+        apiKeyUrl
+          ? `Would you like to set your ${providerName} API key?\nGet a key: ${apiKeyUrl}`
+          : `Would you like to set your ${providerName} API key?`,
         selector,
-        'Enter to confirm · esc to decline',
+        'Enter confirms Yes by default · esc declines',
         selector,
       );
       return;
@@ -373,9 +381,16 @@ export async function runCli() {
       input.onSubmit = (apiKey) => modelSelection.handleApiKeySubmit(apiKey);
       input.onCancel = () => modelSelection.handleApiKeySubmit(null);
       const apiKeyName = getApiKeyNameForProvider(state.pendingProvider) ?? '';
+      const apiKeyUrl = getProviderApiKeyUrl(state.pendingProvider);
+      const description = [
+        apiKeyName ? `(${apiKeyName})` : '',
+        apiKeyUrl ? `Get a key: ${apiKeyUrl}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
       renderScreenView(
         `Enter ${getProviderDisplayName(state.pendingProvider)} API Key`,
-        apiKeyName ? `(${apiKeyName})` : '',
+        description,
         input,
         'Enter to confirm · Esc to cancel',
         input,
