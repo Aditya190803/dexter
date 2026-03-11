@@ -30,3 +30,13 @@ export { tavilySearch } from './tavily.js';
 export { exaSearch } from './exa.js';
 export { perplexitySearch } from './perplexity.js';
 export { xSearchTool, X_SEARCH_DESCRIPTION } from './x-search.js';
+export { langSearch } from './langsearch.js';
+export {
+  WEB_SEARCH_PROVIDER_DEFS,
+  AUTO_WEB_SEARCH_ORDER,
+  isWebSearchProviderId,
+  getWebSearchProviderDef,
+  getWebSearchProviderDisplayName,
+  getWebSearchProviderApiKeyUrl,
+  resolveWebSearchProvider,
+} from './providers.js';

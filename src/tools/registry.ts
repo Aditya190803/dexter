@@ -1,6 +1,15 @@
 import { StructuredToolInterface } from '@langchain/core/tools';
 import { createFinancialSearch, createFinancialMetrics, createReadFilings } from './finance/index.js';
-import { exaSearch, perplexitySearch, tavilySearch, WEB_SEARCH_DESCRIPTION, xSearchTool, X_SEARCH_DESCRIPTION } from './search/index.js';
+import {
+  exaSearch,
+  langSearch,
+  perplexitySearch,
+  resolveWebSearchProvider,
+  tavilySearch,
+  WEB_SEARCH_DESCRIPTION,
+  xSearchTool,
+  X_SEARCH_DESCRIPTION,
+} from './search/index.js';
 import { skillTool, SKILL_TOOL_DESCRIPTION } from './skill.js';
 import { webFetchTool, WEB_FETCH_DESCRIPTION } from './fetch/web-fetch.js';
 import { browserTool, BROWSER_DESCRIPTION } from './browser/browser.js';
@@ -13,6 +22,7 @@ import { READ_FILINGS_DESCRIPTION } from './finance/read-filings.js';
 import { heartbeatTool, HEARTBEAT_TOOL_DESCRIPTION } from './heartbeat/heartbeat-tool.js';
 import { memoryGetTool, MEMORY_GET_DESCRIPTION, memorySearchTool, MEMORY_SEARCH_DESCRIPTION, memoryUpdateTool, MEMORY_UPDATE_DESCRIPTION } from './memory/index.js';
 import { discoverSkills } from '../skills/index.js';
+import { getSetting } from '../utils/config.js';
 
 /**
  * A registered tool with its rich description for system prompt injection.
@@ -97,20 +107,31 @@ export function getToolRegistry(model: string): RegisteredTool[] {
     },
   ];
 
-  // Include web_search if Exa, Perplexity, or Tavily API key is configured (Exa → Perplexity → Tavily)
-  if (process.env.EXASEARCH_API_KEY) {
+  // Include web_search when any supported provider is configured.
+  const preferredWebSearchProvider = getSetting('webSearchProvider', 'auto');
+  const resolvedWebSearchProvider = resolveWebSearchProvider(
+    typeof preferredWebSearchProvider === 'string' ? preferredWebSearchProvider : 'auto',
+  );
+
+  if (resolvedWebSearchProvider === 'exa') {
     tools.push({
       name: 'web_search',
       tool: exaSearch,
       description: WEB_SEARCH_DESCRIPTION,
     });
-  } else if (process.env.PERPLEXITY_API_KEY) {
+  } else if (resolvedWebSearchProvider === 'langsearch') {
+    tools.push({
+      name: 'web_search',
+      tool: langSearch,
+      description: WEB_SEARCH_DESCRIPTION,
+    });
+  } else if (resolvedWebSearchProvider === 'perplexity') {
     tools.push({
       name: 'web_search',
       tool: perplexitySearch,
       description: WEB_SEARCH_DESCRIPTION,
     });
-  } else if (process.env.TAVILY_API_KEY) {
+  } else if (resolvedWebSearchProvider === 'tavily') {
     tools.push({
       name: 'web_search',
       tool: tavilySearch,

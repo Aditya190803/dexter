@@ -89,7 +89,7 @@ export class Agent {
     const memoryFlushState = { alreadyFlushed: false };
 
     // Build initial prompt with conversation history context
-    let currentPrompt = this.buildInitialPrompt(query, inMemoryHistory);
+    let currentPrompt = await this.buildInitialPrompt(query, inMemoryHistory);
 
     // Main agent loop
     let overflowRetries = 0;
@@ -274,15 +274,41 @@ export class Agent {
   /**
    * Build initial prompt with conversation history context if available
    */
-  private buildInitialPrompt(
+  private async buildInitialPrompt(
     query: string,
     inMemoryChatHistory?: InMemoryChatHistory
-  ): string {
+  ): Promise<string> {
     if (!inMemoryChatHistory?.hasMessages()) {
       return query;
     }
 
     const recentTurns = inMemoryChatHistory.getRecentTurns();
+    const completed = inMemoryChatHistory
+      .getMessages()
+      .filter(m => m.answer !== null);
+
+    let selectedMessages = completed.length <= 2
+      ? completed
+      : await inMemoryChatHistory.selectRelevantMessages(query);
+
+    if (selectedMessages.length === 0) {
+      selectedMessages = completed.slice(-3);
+    }
+
+    if (selectedMessages.length === 0) {
+      return query;
+    }
+
+    if (selectedMessages.length > 0) {
+      return buildHistoryContext({
+        entries: selectedMessages.flatMap((message) => [
+          { role: 'user' as const, content: message.query },
+          { role: 'assistant' as const, content: message.answer ?? '' },
+        ]),
+        currentMessage: query,
+      });
+    }
+
     if (recentTurns.length === 0) {
       return query;
     }

@@ -2,6 +2,8 @@ import { DynamicStructuredTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { callApi } from './api.js';
 import { formatToolResult } from '../types.js';
+import { getSetting } from '../../utils/config.js';
+import { resolveFinanceProvider } from './providers.js';
 
 // Types for filing item metadata
 export interface FilingItemType {
@@ -22,6 +24,15 @@ let cachedItemTypes: FilingItemTypes | null = null;
  * Used to provide the inner LLM with exact item names for selective retrieval.
  */
 export async function getFilingItemTypes(): Promise<FilingItemTypes> {
+  const configuredProvider = getSetting('financeProvider', 'auto');
+  const resolvedProvider = resolveFinanceProvider(
+    typeof configuredProvider === 'string' ? configuredProvider : 'auto',
+  );
+
+  if (resolvedProvider !== 'financialdatasets') {
+    throw new Error('Filing item types are only supported with Financial Datasets provider.');
+  }
+
   if (cachedItemTypes) {
     return cachedItemTypes;
   }
@@ -156,4 +167,3 @@ export const get8KFilingItems = new DynamicStructuredTool({
     return formatToolResult(data, [url]);
   },
 });
-
