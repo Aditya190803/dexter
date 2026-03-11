@@ -77,22 +77,25 @@ bun install
 cp env.example .env
 
 # Edit .env and add your API keys (if using cloud providers)
-# OPENAI_API_KEY=your-openai-api-key
-# ANTHROPIC_API_KEY=your-anthropic-api-key (optional)
-# GOOGLE_API_KEY=your-google-api-key (optional)
-# XAI_API_KEY=your-xai-api-key (optional)
-# OPENROUTER_API_KEY=your-openrouter-api-key (optional)
+# OPENAI_API_KEY=your-openai-api-key (https://platform.openai.com/api-keys)
+# ANTHROPIC_API_KEY=your-anthropic-api-key (optional, https://platform.claude.com/settings/keys)
+# GOOGLE_API_KEY=your-google-api-key (optional, https://aistudio.google.com/app/apikey)
+# XAI_API_KEY=your-xai-api-key (optional, https://console.x.ai/)
+# OPENROUTER_API_KEY=your-openrouter-api-key (optional, https://openrouter.ai/settings/keys)
+# MOONSHOT_API_KEY=your-moonshot-api-key (optional, https://platform.moonshot.ai/console/api-keys)
+# DEEPSEEK_API_KEY=your-deepseek-api-key (optional, https://platform.deepseek.com/api_keys)
 
 # Institutional-grade market data for agents; AAPL, NVDA, MSFT are free
-# FINANCIAL_DATASETS_API_KEY=your-financial-datasets-api-key
-# ALPHAVANTAGE_API_KEY=your-alphavantage-api-key
+# FINANCIAL_DATASETS_API_KEY=your-financial-datasets-api-key (https://financialdatasets.ai/)
+# ALPHAVANTAGE_API_KEY=your-alphavantage-api-key (https://www.alphavantage.co/support/#api-key)
 
 # (Optional) If using Ollama locally
 # OLLAMA_BASE_URL=http://127.0.0.1:11434
 
-# Web Search (Exa preferred, Tavily fallback)
-# EXASEARCH_API_KEY=your-exa-api-key
-# TAVILY_API_KEY=your-tavily-api-key
+# Web Search (Exa preferred, LangSearch second, Tavily fallback)
+# EXASEARCH_API_KEY=your-exa-api-key (https://dashboard.exa.ai/)
+# LANGSEARCH_API_KEY=your-langsearch-api-key (https://langsearch.com/dashboard)
+# TAVILY_API_KEY=your-tavily-api-key (https://app.tavily.com/home)
 ```
 
 ## 🚀 How to Run

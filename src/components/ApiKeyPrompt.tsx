@@ -4,15 +4,21 @@ import { colors } from '../theme.js';
 
 interface ApiKeyConfirmProps {
   providerName: string;
+  apiKeyUrl?: string;
   onConfirm: (wantsToSet: boolean) => void;
 }
 
-export function ApiKeyConfirm({ providerName, onConfirm }: ApiKeyConfirmProps) {
-  useInput((input) => {
-    const key = input.toLowerCase();
-    if (key === 'y') {
+export function ApiKeyConfirm({ providerName, apiKeyUrl, onConfirm }: ApiKeyConfirmProps) {
+  useInput((input, keyInfo) => {
+    if (keyInfo.return) {
       onConfirm(true);
-    } else if (key === 'n') {
+      return;
+    }
+
+    const normalizedInput = input.toLowerCase();
+    if (normalizedInput === 'y') {
+      onConfirm(true);
+    } else if (normalizedInput === 'n') {
       onConfirm(false);
     }
   });
@@ -23,8 +29,11 @@ export function ApiKeyConfirm({ providerName, onConfirm }: ApiKeyConfirmProps) {
         Set API Key
       </Text>
       <Text>
-        Would you like to set your {providerName} API key? <Text color={colors.muted}>(y/n)</Text>
+        Would you like to set your {providerName} API key? <Text color={colors.muted}>(Y/n)</Text>
       </Text>
+      {apiKeyUrl && (
+        <Text color={colors.muted}>Get a key: {apiKeyUrl}</Text>
+      )}
     </Box>
   );
 }
@@ -32,10 +41,11 @@ export function ApiKeyConfirm({ providerName, onConfirm }: ApiKeyConfirmProps) {
 interface ApiKeyInputProps {
   providerName: string;
   apiKeyName: string;
+  apiKeyUrl?: string;
   onSubmit: (apiKey: string | null) => void;
 }
 
-export function ApiKeyInput({ providerName, apiKeyName, onSubmit }: ApiKeyInputProps) {
+export function ApiKeyInput({ providerName, apiKeyName, apiKeyUrl, onSubmit }: ApiKeyInputProps) {
   const [value, setValue] = useState('');
 
   useInput((input, key) => {
@@ -61,6 +71,9 @@ export function ApiKeyInput({ providerName, apiKeyName, onSubmit }: ApiKeyInputP
       <Text color={colors.muted}>
         ({apiKeyName})
       </Text>
+      {apiKeyUrl && (
+        <Text color={colors.muted}>Get a key: {apiKeyUrl}</Text>
+      )}
       <Box marginTop={1}>
         <Text color={colors.primary}>{'> '}</Text>
         <Text>{maskedValue}</Text>

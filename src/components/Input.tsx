@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Text, useInput } from 'ink';
 
 import { colors } from '../theme.js';
@@ -37,8 +37,21 @@ function isCtrlBackspaceEscapeSequence(input: string): boolean {
 
 export function Input({ onSubmit, historyValue, onHistoryNavigate }: InputProps) {
   const { text, cursorPosition, actions } = useTextBuffer();
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0);
   const slashSuggestions = getSlashCommandSuggestions(text);
   const showSlashSuggestions = text.trim().startsWith('/') && slashSuggestions.length > 0;
+  const selectedSuggestion = showSlashSuggestions
+    ? slashSuggestions[Math.min(selectedSuggestionIndex, slashSuggestions.length - 1)]
+    : null;
+
+  useEffect(() => {
+    if (!showSlashSuggestions) {
+      setSelectedSuggestionIndex(0);
+      return;
+    }
+
+    setSelectedSuggestionIndex((prev) => Math.min(prev, slashSuggestions.length - 1));
+  }, [showSlashSuggestions, slashSuggestions.length]);
 
   // Update input buffer when history navigation changes
   useEffect(() => {
@@ -64,6 +77,19 @@ export function Input({ onSubmit, historyValue, onHistoryNavigate }: InputProps)
     if (input && isCtrlBackspaceEscapeSequence(input)) {
       actions.deleteWordBackward();
       return;
+    }
+
+    // Up/down arrow: navigate slash suggestions when visible
+    if (showSlashSuggestions) {
+      if (key.upArrow) {
+        setSelectedSuggestionIndex((prev) => (prev - 1 + slashSuggestions.length) % slashSuggestions.length);
+        return;
+      }
+
+      if (key.downArrow) {
+        setSelectedSuggestionIndex((prev) => (prev + 1) % slashSuggestions.length);
+        return;
+      }
     }
 
     // Up arrow: move cursor up if not on first line, else history navigation
@@ -150,6 +176,11 @@ export function Input({ onSubmit, historyValue, onHistoryNavigate }: InputProps)
 
     // Tab - autocomplete slash commands (e.g. /h -> /help)
     if (key.tab) {
+      if (selectedSuggestion) {
+        actions.setValue(selectedSuggestion.command);
+        return;
+      }
+
       const completed = getSlashAutocomplete(text);
       if (completed) {
         actions.setValue(completed);
@@ -159,6 +190,13 @@ export function Input({ onSubmit, historyValue, onHistoryNavigate }: InputProps)
 
     // Handle submit (plain Enter)
     if (key.return) {
+      if (selectedSuggestion) {
+        onSubmit(selectedSuggestion.command);
+        actions.clear();
+        setSelectedSuggestionIndex(0);
+        return;
+      }
+
       const val = text.trim();
       if (val) {
         onSubmit(val);
@@ -191,8 +229,12 @@ export function Input({ onSubmit, historyValue, onHistoryNavigate }: InputProps)
       </Box>
       {showSlashSuggestions && (
         <Box paddingX={1} marginBottom={1} flexDirection="column">
-          {slashSuggestions.map((suggestion) => (
-            <Text key={suggestion.command} color={colors.muted}>
+          {slashSuggestions.map((suggestion, index) => (
+            <Text
+              key={suggestion.command}
+              color={index === selectedSuggestionIndex ? colors.primaryLight : colors.muted}
+              bold={index === selectedSuggestionIndex}
+            >
               {suggestion.command} - {suggestion.description}
             </Text>
           ))}

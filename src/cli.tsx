@@ -15,9 +15,9 @@ import { WebSearchProviderSelector } from './components/WebSearchProviderSelecto
 import { FinanceProviderSelector } from './components/FinanceProviderSelector.js';
 import { DebugPanel } from './components/DebugPanel.js';
 import { HistoryItemView, WorkingIndicator } from './components/index.js';
-import { getApiKeyNameForProvider, getProviderDisplayName } from './utils/env.js';
-import { getWebSearchProviderDisplayName } from './tools/search/providers.js';
-import { getFinanceProviderDisplayName } from './tools/finance/providers.js';
+import { getApiKeyNameForProvider, getProviderApiKeyUrl, getProviderDisplayName } from './utils/env.js';
+import { getWebSearchProviderApiKeyUrl, getWebSearchProviderDisplayName } from './tools/search/providers.js';
+import { getFinanceProviderApiKeyUrl, getFinanceProviderDisplayName } from './tools/finance/providers.js';
 
 import { useModelSelection } from './hooks/useModelSelection.js';
 import { useWebSearchSelection } from './hooks/useWebSearchSelection.js';
@@ -285,6 +285,7 @@ export function CLI() {
       <Box flexDirection="column">
         <ApiKeyConfirm 
           providerName={getProviderDisplayName(pendingProvider)} 
+          apiKeyUrl={getProviderApiKeyUrl(pendingProvider)}
           onConfirm={handleApiKeyConfirm} 
         />
       </Box>
@@ -298,6 +299,7 @@ export function CLI() {
         <ApiKeyInput 
           providerName={getProviderDisplayName(pendingProvider)}
           apiKeyName={apiKeyName}
+          apiKeyUrl={getProviderApiKeyUrl(pendingProvider)}
           onSubmit={handleApiKeySubmit} 
         />
       </Box>
@@ -321,6 +323,7 @@ export function CLI() {
       <Box flexDirection="column">
         <ApiKeyConfirm
           providerName={getPendingProviderName()}
+          apiKeyUrl={webSearchSelectionState.pendingProvider ? getWebSearchProviderApiKeyUrl(webSearchSelectionState.pendingProvider) : undefined}
           onConfirm={handleWebSearchApiKeyConfirm}
         />
       </Box>
@@ -333,6 +336,7 @@ export function CLI() {
         <ApiKeyInput
           providerName={getPendingProviderName()}
           apiKeyName={getPendingProviderApiKeyName()}
+          apiKeyUrl={webSearchSelectionState.pendingProvider ? getWebSearchProviderApiKeyUrl(webSearchSelectionState.pendingProvider) : undefined}
           onSubmit={handleWebSearchApiKeySubmit}
         />
       </Box>
@@ -356,6 +360,7 @@ export function CLI() {
       <Box flexDirection="column">
         <ApiKeyConfirm
           providerName={getPendingFinanceProviderName()}
+          apiKeyUrl={financeSelectionState.pendingProvider ? getFinanceProviderApiKeyUrl(financeSelectionState.pendingProvider) : undefined}
           onConfirm={handleFinanceApiKeyConfirm}
         />
       </Box>
@@ -368,6 +373,7 @@ export function CLI() {
         <ApiKeyInput
           providerName={getPendingFinanceProviderName()}
           apiKeyName={getPendingFinanceProviderApiKeyName()}
+          apiKeyUrl={financeSelectionState.pendingProvider ? getFinanceProviderApiKeyUrl(financeSelectionState.pendingProvider) : undefined}
           onSubmit={handleFinanceApiKeySubmit}
         />
       </Box>

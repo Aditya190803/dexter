@@ -4,6 +4,7 @@ export interface FinanceProviderDef {
   id: Exclude<FinanceProviderId, 'auto'>;
   displayName: string;
   apiKeyEnvVar: string;
+  apiKeyUrl: string;
 }
 
 export const FINANCE_PROVIDER_DEFS: readonly FinanceProviderDef[] = [
@@ -11,11 +12,13 @@ export const FINANCE_PROVIDER_DEFS: readonly FinanceProviderDef[] = [
     id: 'financialdatasets',
     displayName: 'Financial Datasets',
     apiKeyEnvVar: 'FINANCIAL_DATASETS_API_KEY',
+    apiKeyUrl: 'https://financialdatasets.ai/',
   },
   {
     id: 'alphavantage',
     displayName: 'Alpha Vantage',
     apiKeyEnvVar: 'ALPHAVANTAGE_API_KEY',
+    apiKeyUrl: 'https://www.alphavantage.co/support/#api-key',
   },
 ] as const;
 
@@ -40,6 +43,10 @@ export function getFinanceProviderDef(providerId: Exclude<FinanceProviderId, 'au
 export function getFinanceProviderDisplayName(providerId: FinanceProviderId): string {
   if (providerId === 'auto') return 'Auto';
   return getFinanceProviderDef(providerId).displayName;
+}
+
+export function getFinanceProviderApiKeyUrl(providerId: Exclude<FinanceProviderId, 'auto'>): string {
+  return getFinanceProviderDef(providerId).apiKeyUrl;
 }
 
 export function resolveFinanceProvider(

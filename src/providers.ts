@@ -12,6 +12,8 @@ export interface ProviderDef {
   modelPrefix: string;
   /** Environment variable name for API key. Omit for local providers (e.g., Ollama). */
   apiKeyEnvVar?: string;
+  /** URL where the user can create or manage an API key. */
+  apiKeyUrl?: string;
   /** Fast model variant for lightweight tasks like summarization. */
   fastModel?: string;
 }
@@ -22,6 +24,7 @@ export const PROVIDERS: ProviderDef[] = [
     displayName: 'OpenAI',
     modelPrefix: '',
     apiKeyEnvVar: 'OPENAI_API_KEY',
+    apiKeyUrl: 'https://platform.openai.com/api-keys',
     fastModel: 'gpt-4.1',
   },
   {
@@ -29,6 +32,7 @@ export const PROVIDERS: ProviderDef[] = [
     displayName: 'Anthropic',
     modelPrefix: 'claude-',
     apiKeyEnvVar: 'ANTHROPIC_API_KEY',
+    apiKeyUrl: 'https://platform.claude.com/settings/keys',
     fastModel: 'claude-haiku-4-5',
   },
   {
@@ -36,6 +40,7 @@ export const PROVIDERS: ProviderDef[] = [
     displayName: 'Google',
     modelPrefix: 'gemini-',
     apiKeyEnvVar: 'GOOGLE_API_KEY',
+    apiKeyUrl: 'https://aistudio.google.com/app/apikey',
     fastModel: 'gemini-3-flash-preview',
   },
   {
@@ -43,6 +48,7 @@ export const PROVIDERS: ProviderDef[] = [
     displayName: 'xAI',
     modelPrefix: 'grok-',
     apiKeyEnvVar: 'XAI_API_KEY',
+    apiKeyUrl: 'https://console.x.ai/',
     fastModel: 'grok-4-1-fast-reasoning',
   },
   {
@@ -50,6 +56,7 @@ export const PROVIDERS: ProviderDef[] = [
     displayName: 'Moonshot',
     modelPrefix: 'kimi-',
     apiKeyEnvVar: 'MOONSHOT_API_KEY',
+    apiKeyUrl: 'https://platform.moonshot.ai/console/api-keys',
     fastModel: 'kimi-k2-5',
   },
   {
@@ -57,6 +64,7 @@ export const PROVIDERS: ProviderDef[] = [
     displayName: 'DeepSeek',
     modelPrefix: 'deepseek-',
     apiKeyEnvVar: 'DEEPSEEK_API_KEY',
+    apiKeyUrl: 'https://platform.deepseek.com/api_keys',
     fastModel: 'deepseek-chat',
   },
   {
@@ -64,6 +72,7 @@ export const PROVIDERS: ProviderDef[] = [
     displayName: 'OpenRouter',
     modelPrefix: 'openrouter:',
     apiKeyEnvVar: 'OPENROUTER_API_KEY',
+    apiKeyUrl: 'https://openrouter.ai/settings/keys',
     fastModel: 'openrouter:openai/gpt-4o-mini',
   },
   {

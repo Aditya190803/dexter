@@ -13,6 +13,10 @@ export function getProviderDisplayName(providerId: string): string {
   return getProviderById(providerId)?.displayName ?? providerId;
 }
 
+export function getProviderApiKeyUrl(providerId: string): string | undefined {
+  return getProviderById(providerId)?.apiKeyUrl;
+}
+
 export function checkApiKeyExistsForProvider(providerId: string): boolean {
   const apiKeyName = getApiKeyNameForProvider(providerId);
   if (!apiKeyName) return true;

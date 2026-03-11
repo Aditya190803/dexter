@@ -4,12 +4,28 @@ export interface WebSearchProviderDef {
   id: Exclude<WebSearchProviderId, 'auto'>;
   displayName: string;
   apiKeyEnvVar: string;
+  apiKeyUrl: string;
 }
 
 export const WEB_SEARCH_PROVIDER_DEFS: readonly WebSearchProviderDef[] = [
-  { id: 'langsearch', displayName: 'LangSearch', apiKeyEnvVar: 'LANGSEARCH_API_KEY' },
-  { id: 'exa', displayName: 'Exa', apiKeyEnvVar: 'EXASEARCH_API_KEY' },
-  { id: 'tavily', displayName: 'Tavily', apiKeyEnvVar: 'TAVILY_API_KEY' },
+  {
+    id: 'langsearch',
+    displayName: 'LangSearch',
+    apiKeyEnvVar: 'LANGSEARCH_API_KEY',
+    apiKeyUrl: 'https://langsearch.com/dashboard',
+  },
+  {
+    id: 'exa',
+    displayName: 'Exa',
+    apiKeyEnvVar: 'EXASEARCH_API_KEY',
+    apiKeyUrl: 'https://dashboard.exa.ai/',
+  },
+  {
+    id: 'tavily',
+    displayName: 'Tavily',
+    apiKeyEnvVar: 'TAVILY_API_KEY',
+    apiKeyUrl: 'https://app.tavily.com/home',
+  },
 ] as const;
 
 // Keep existing behavior: Exa is default priority in auto mode.
@@ -34,6 +50,10 @@ export function getWebSearchProviderDef(providerId: Exclude<WebSearchProviderId,
 export function getWebSearchProviderDisplayName(providerId: WebSearchProviderId): string {
   if (providerId === 'auto') return 'Auto';
   return getWebSearchProviderDef(providerId).displayName;
+}
+
+export function getWebSearchProviderApiKeyUrl(providerId: Exclude<WebSearchProviderId, 'auto'>): string {
+  return getWebSearchProviderDef(providerId).apiKeyUrl;
 }
 
 export function resolveWebSearchProvider(
